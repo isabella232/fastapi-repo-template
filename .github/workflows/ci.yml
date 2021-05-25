@@ -67,7 +67,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        repository: adjust/cc_tools
+        token: ${{ secrets.ACCESS_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v2
