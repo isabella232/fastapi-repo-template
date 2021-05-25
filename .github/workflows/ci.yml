@@ -67,7 +67,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        repository: adjust/cc_tools
+        repository: adjust/cc-tools
         token: ${{ secrets.ACCESS_TOKEN }}
 
     - name: Set up Python
