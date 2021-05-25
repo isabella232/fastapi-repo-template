@@ -1,0 +1,196 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [develop, production]
+  pull_request:
+    branches: [develop]
+
+env:
+  ANSIBLE_VAULT_PASSWORD: ${{ secrets.AUTOMATE_ANSIBLE_VAULT_PASSWORD }}
+  ASANA_TOKEN: ${{ secrets.AUTOMATE_ASANA_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.AUTOMATE_GITHUB_ACCESS_TOKEN }}
+  SLACK_WEBHOOK_URL: ${{ secrets.AUTOMATE_SLACK_WEBHOOK }}
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+    - uses: adjust/github-actions-asana@master
+      if: github.event_name == 'pull_request'
+      continue-on-error: true
+      with:
+        action: 'add-comment'
+        is-pinned: true
+        text: "View Pull Request: ${{ github.event.pull_request.html_url }} 👀"
+
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+#    services:
+#      postgres:
+#        image: postgres:11.2-alpine
+#        env:
+#          POSTGRES_DB: cs
+#          POSTGRES_USER: cs
+#          POSTGRES_PASSWORD: cs
+#        options: >-
+#          --health-cmd pg_isready
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 5
+#        ports:
+#          - 5432:5432
+#
+#      redis:
+#        image: redis
+#        options: >-
+#          --health-cmd "redis-cli ping"
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 5
+#        ports:
+#          - 6379:6379
+#
+#    env:
+#      DATABASE_URL: postgresql://cs:cs@localhost:5432/cs
+#      REDIS_HOST: localhost
+#      REDIS_PORT: 6379
+
+    strategy:
+      matrix:
+        checks: ['make flake8', 'make mypy', 'make bandit', 'make safety', 'make check-licenses', 'make test']
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8.7
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: pip-check-${{ hashFiles('**/requirements**.txt') }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install -U pip setuptools
+        sed -i "s/ssh:\/\/git/https:\/\/${{secrets.AUTOMATE_GITHUB_ACCESS_TOKEN}}/g" requirements.txt
+        python -m pip install -r requirements-dev.txt
+
+    - name: Run checks
+      id: run_checks
+      run: ${{ matrix.checks }}
+
+#    - name: Send Slack notification
+#      if: github.event_name == 'push' && failure()
+#      uses: adjust/github-actions-slack@v1.2.4
+#      with:
+#        status: ${{ job.status }}
+#        steps: ${{ toJson(steps) }}
+
+#  deploy:
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 30
+#    needs: check
+#    if: github.event_name == 'push'
+#
+#    steps:
+#    - name: Clone cc-ansible
+#      uses: actions/checkout@v2
+#      with:
+#        repository: adjust/cc-ansible
+#        token: ${{ secrets.AUTOMATE_GITHUB_ACCESS_TOKEN }}
+#
+#    - name: Install SSH key
+#      uses: shimataro/ssh-key-action@v2
+#      with:
+#        key: ${{ secrets.AUTOMATE_DEPLOY_SSH_KEY }}
+#        known_hosts: ${{ secrets.AUTOMATE_DEPLOY_KNOWN_HOSTS }}
+#        config: |
+#          Host *.adjust.com
+#            User acquired
+#
+#    - name: Set up Python
+#      uses: actions/setup-python@v2
+#      with:
+#        python-version: 3.8.7
+#
+#    - uses: actions/cache@v2
+#      with:
+#        path: ~/.cache/pip
+#        key: pip-deploy-${{ hashFiles('**/requirements.txt') }}
+#
+#    - name: Install dependencies
+#      run: |
+#        python -m pip install -U pip setuptools
+#        python -m pip install -r requirements.txt
+#
+#    - name: 'Deploy: staging'
+#      id: deploy_staging
+#      if: endsWith(github.ref, 'heads/develop')
+#      uses: nick-invision/retry@v2
+#      with:
+#        timeout_minutes: 5
+#        max_attempts: 3
+#        retry_on: timeout
+#        command: ansible-playbook -i staging playbooks/configs-service/deploy.yml
+#
+#    - uses: adjust/github-actions-asana@master
+#      if: endsWith(github.ref, 'heads/develop')
+#      continue-on-error: true
+#      with:
+#        action: 'add-comment'
+#        is-pinned: true
+#        text: "${{ github.repository }} is deployed to staging 🎉"
+#
+#    - name: 'Deploy: production'
+#      id: deploy_production
+#      if: endsWith(github.ref, 'heads/production')
+#      uses: nick-invision/retry@v2
+#      with:
+#        timeout_minutes: 5
+#        max_attempts: 3
+#        retry_on: timeout
+#        command: ansible-playbook -i production playbooks/configs-service/deploy.yml
+#
+#    - name: 'Deploy: demo'
+#      id: deploy_demo
+#      if: endsWith(github.ref, 'heads/production')
+#      uses: nick-invision/retry@v2
+#      with:
+#        timeout_minutes: 5
+#        max_attempts: 3
+#        retry_on: timeout
+#        command: ansible-playbook -i demo playbooks/configs-service/deploy.yml
+#
+#    - name: 'Create New Relic deployment'
+#      id: nr_deployment_marker
+#      if: endsWith(github.ref, 'heads/production')
+#      uses: newrelic/deployment-marker-action@v1
+#      with:
+#        accountId: ${{ secrets.AUTOMATE_NEW_RELIC_ACCOUNT_ID }}
+#        apiKey: ${{ secrets.AUTOMATE_NEW_RELIC_API_KEY }}
+#        applicationId: 42486136
+#        revision: "${{ github.sha }}"
+#        region: eu
+#
+#    - uses: adjust/github-actions-asana@master
+#      if: endsWith(github.ref, 'heads/production')
+#      continue-on-error: true
+#      with:
+#        action: 'add-comment'
+#        is-pinned: true
+#        text: "${{ github.repository }} is deployed to production 🎉"
+#
+#    - name: Send Slack notification
+#      if: always()
+#      uses: adjust/github-actions-slack@v1.2.4
+#      with:
+#        status: ${{ job.status }}
+#        steps: ${{ toJson(steps) }}

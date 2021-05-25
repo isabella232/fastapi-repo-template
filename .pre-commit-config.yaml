@@ -1,0 +1,41 @@
+repos:
+  - repo: local
+    hooks:
+    - id: make-isort
+      name: make-isort
+      entry: make isort
+      language: system
+      types: [python]
+
+    - id: make-flake8
+      name: make-flake8
+      entry: make flake8
+      language: system
+      types: [python]
+
+    - id: make-mypy
+      name: make-mypy
+      entry: make mypy
+      language: system
+      types: [python]
+
+    - id: make-bandit
+      name: make-bandit
+      entry: make bandit
+      language: system
+      types: [python]
+      stages: [push]
+
+    - id: make-safety
+      name: make-safety
+      entry: make safety
+      language: system
+      types: [file]
+      stages: [push]
+
+    - id: make-test
+      name: make-test
+      entry: make test
+      language: system
+      types: [python]
+      stages: [push]
