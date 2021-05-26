@@ -7,7 +7,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class Settings(RedisSettings, BaseSettings):
     class Config:
-        env_file = os.path.join(BASE_DIR, '.env')
+        env_file = os.path.join(BASE_DIR, '.env.sample')
 
     debug = bool(os.environ.get('Debug', False))
     newrelic_config: str = os.path.join(BASE_DIR, 'newrelic.ini')
