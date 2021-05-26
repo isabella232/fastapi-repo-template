@@ -79,8 +79,6 @@ jobs:
       with:
         path: ~/.cache/pip
         key: pip-check-${{ hashFiles('**/requirements**.txt') }}
-        repository: adjust/cc-tools
-        token: ${{ secrets.ACCESS_TOKEN }}
 
     - name: Install dependencies
       run: |
