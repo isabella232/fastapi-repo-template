@@ -7,7 +7,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class Settings(RedisSettings, BaseSettings):
     class Config:
-        env_file = os.path.join(BASE_DIR, '.env')
+        env_file = os.path.join(BASE_DIR, '.env.sample')
+        DATABASE_URL: str = ''
 
     debug = bool(os.environ.get('Debug', False))
     newrelic_config: str = os.path.join(BASE_DIR, 'newrelic.ini')
@@ -19,7 +20,6 @@ class Settings(RedisSettings, BaseSettings):
     log_level = 'DEBUG'
     logs_file: str = 'SERVICE_NAME_default.log'
     database_url: str = ''
-    DATABASE_URL: str = ''
 
 
 settings = Settings()
