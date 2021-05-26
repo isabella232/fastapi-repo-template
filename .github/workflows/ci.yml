@@ -30,35 +30,35 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
-#    services:
-#      postgres:
-#        image: postgres:11.2-alpine
-#        env:
-#          POSTGRES_DB: cs
-#          POSTGRES_USER: cs
-#          POSTGRES_PASSWORD: cs
-#        options: >-
-#          --health-cmd pg_isready
-#          --health-interval 10s
-#          --health-timeout 5s
-#          --health-retries 5
-#        ports:
-#          - 5432:5432
-#
-#      redis:
-#        image: redis
-#        options: >-
-#          --health-cmd "redis-cli ping"
-#          --health-interval 10s
-#          --health-timeout 5s
-#          --health-retries 5
-#        ports:
-#          - 6379:6379
-#
-#    env:
-#      DATABASE_URL: postgresql://cs:cs@localhost:5432/cs
-#      REDIS_HOST: localhost
-#      REDIS_PORT: 6379
+    services:
+      postgres:
+        image: postgres:11.2-alpine
+        env:
+          POSTGRES_DB: cs
+          POSTGRES_USER: cs
+          POSTGRES_PASSWORD: cs
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    env:
+      DATABASE_URL: postgresql://cs:cs@localhost:5432/cs
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
 
     strategy:
       matrix:
