@@ -10,7 +10,7 @@ requirements:
 start: requirements migrations web
 
 test:
-	pytest --cov=backend --blockage  --cov-report term-missing
+	pytest --cov=backend --cov-fail-under 100 --blockage  --cov-report term-missing
 
 coverage-collect:
 	coverage run -m pytest
