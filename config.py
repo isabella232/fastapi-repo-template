@@ -19,6 +19,7 @@ class Settings(RedisSettings, BaseSettings):
     log_level = 'DEBUG'
     logs_file: str = 'SERVICE_NAME_default.log'
     database_url: str = ''
+    DATABASE_URL: str = ''
 
 
 settings = Settings()
