@@ -7,11 +7,11 @@ def test_simple() -> None:
     try:
         import backend
     except ImportError:
-        assert False
+        raise AssertionError
     else:
-        assert True
+        assert backend
 
 
 def test_constants() -> None:
     """Testing constants."""
-    assert BaseConstants.test_constant == 'test'
+    assert BaseConstants.test_constant is not None
