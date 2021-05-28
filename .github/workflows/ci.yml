@@ -91,9 +91,9 @@ jobs:
       REDIS_HOST: localhost
       REDIS_PORT: 6379
 
-#    strategy:
-#      matrix:
-#        checks: ['make flake8', 'make mypy', 'make bandit', 'make safety', 'make check-licenses', 'make test']
+    strategy:
+      matrix:
+        checks: ['make flake8', 'make mypy', 'make bandit', 'make safety', 'make check-licenses', 'make test']
 
     steps:
     - uses: actions/checkout@v2
@@ -116,8 +116,7 @@ jobs:
 
     - name: Run checks
       id: run_checks
-#      run: ${{ matrix.checks }}
-      run: make flake8 && make mypy && make bandit && make safety && make check-licenses && make test
+      run: ${{ matrix.checks }}
 
 #    - name: Send Slack notification
 #      if: github.event_name == 'push' && failure()
