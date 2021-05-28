@@ -59,6 +59,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    needs: smoke_tests
 
     services:
       postgres:
@@ -92,8 +93,7 @@ jobs:
 
     strategy:
       matrix:
-        checks: ['make smoke-tests',
-                 'make flake8', 'make mypy', 'make bandit', 'make safety', 'make check-licenses', 'make test']
+        checks: ['make flake8', 'make mypy', 'make bandit', 'make safety', 'make check-licenses', 'make test']
 
     steps:
     - uses: actions/checkout@v2
