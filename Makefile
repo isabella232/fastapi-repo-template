@@ -41,7 +41,7 @@ safety:
 check-licenses:
 	check_licenses > /dev/null
 
-check: isort flake8 mypy bandit safety check-licenses test
+check: smoke-tests isort flake8 mypy bandit safety check-licenses test
 
 git-hooks:
 	pre-commit install && pre-commit install -t pre-push
