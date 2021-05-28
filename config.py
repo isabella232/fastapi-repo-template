@@ -1,4 +1,5 @@
 import os
+
 from cc_tools.settings.base import BaseSettings
 from cc_tools.settings.redis import RedisSettings
 
