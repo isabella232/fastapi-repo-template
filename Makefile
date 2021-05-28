@@ -12,6 +12,9 @@ start: requirements migrations web
 test:
 	pytest --cov=backend --cov-fail-under 100 --blockage  --cov-report term-missing
 
+smoke-tests:
+	pytest tests/smoke_tests
+
 coverage-collect:
 	coverage run -m pytest
 

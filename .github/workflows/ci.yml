@@ -62,7 +62,8 @@ jobs:
 
     strategy:
       matrix:
-        checks: ['make flake8', 'make mypy', 'make bandit', 'make safety', 'make check-licenses', 'make test']
+        checks: ['make smoke-tests',
+                 'make flake8', 'make mypy', 'make bandit', 'make safety', 'make check-licenses', 'make test']
 
     steps:
     - uses: actions/checkout@v2
