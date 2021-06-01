@@ -12,6 +12,9 @@ start: requirements migrations web
 test:
 	pytest --cov=backend --cov-fail-under 100 --blockage  --cov-report term-missing
 
+smoke-tests:
+	pytest tests/smoke_tests
+
 coverage-collect:
 	coverage run -m pytest
 
@@ -38,7 +41,7 @@ safety:
 check-licenses:
 	check_licenses > /dev/null
 
-check: isort flake8 mypy bandit safety check-licenses test
+check: smoke-tests isort flake8 mypy bandit safety check-licenses test
 
 git-hooks:
 	pre-commit install && pre-commit install -t pre-push

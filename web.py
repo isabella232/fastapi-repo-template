@@ -7,7 +7,6 @@ from config import settings
 app = FastAPI(
     debug=settings.debug,
     root_path=settings.root_path,
-    servers=[{'url': '/control-center/configs-service'}],
     redoc_url='/internal/redoc',
     docs_url='/internal/docs',
 )
