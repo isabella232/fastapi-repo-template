@@ -1,6 +1,12 @@
-FastApi Tuned Template 
+FastAPI service template 
 ==========================
 **Description:** This is the minimal template for future projects on FastApi
+
+**Owner:** [Automate](https://mate.adjust.com/teams/automate)
+
+**Contacts:** automate-team@adjust.com, viktor.chaptsev@adjust.com
+
+---
 
 ## Code analysis
 We use some tools to ensure code quality:
